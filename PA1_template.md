@@ -7,7 +7,8 @@ output:
 
 
 ## Loading and preprocessing the data
-```{r}
+
+```r
 if(!file.exists("activity.csv"))
   unzip("activity.zip",exdir = ".")
 
@@ -15,28 +16,41 @@ Df <- read.csv("activity.csv")
 ```
 
 ## What is mean total number of steps taken per day?
-```{r}
+
+```r
 sum <- tapply(Df$steps,Df$date,sum)
 hist(sum)
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+```r
 m <- mean(sum,na.rm= T)
 med <- median(sum,na.rm = T)
 ```
-Mean is `r m`
-Median is `r med` 
+Mean is 1.0766189\times 10^{4}
+Median is 10765 
 
 ## What is the average daily activity pattern?
-```{r}
+
+```r
 avg <- tapply(Df$steps,Df$interval,mean,na.rm=T)
 plot(names(avg),avg,type = "l",xlab="Interval",ylab = "Average number of steps", main ="Average steps across all days for 5 min inerval")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+```r
 maxval<- which(avg == max(avg))
 intr <- names(maxval)
 ```
-Interval with max number of steps is `r intr`
+Interval with max number of steps is 835
 
 
 
 ## Imputing missing values
-``` {r}
+
+```r
 newDf <- Df
 n <- sum(is.na(newDf$steps))
 impute <- function(x) x <- replace(x, is.na(x), mean(x,na.rm = T))
@@ -45,16 +59,22 @@ ddf <- data.frame(steps=unlist(dummy),date=rep(seq(as.Date("2012-10-01"),as.Date
 sum <- tapply(ddf$steps,ddf$date,sum)
 
 hist(sum)
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+```r
 m <- mean(sum,na.rm= T)
 med <- median(sum,na.rm = T)
 ```
-Number of missing Values is `r n`
+Number of missing Values is 2304
 
-Mean after imputing is `r m`
-Median after imputing is `r med`
+Mean after imputing is 1.0766189\times 10^{4}
+Median after imputing is 1.0766189\times 10^{4}
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r}
+
+```r
 ddf$day <- weekdays(ddf$date)
 ddf_wkday <- subset(ddf,!day %in% c("Saturday","Sunday"))
 ddf_wkend <- subset(ddf,day %in% c("Saturday","Sunday"))
@@ -66,3 +86,5 @@ par(mfrow=c(2,1))
 plot(names(avgwkday),avgwkday,type = "l",xlab="Interval",ylab = "Average number of steps", main ="weekday")
 plot(names(avgwkend),avgwkend,type = "l",xlab="Interval",ylab = "Average number of steps", main ="weekend")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
